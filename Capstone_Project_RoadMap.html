@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mutual Fund Analytics Platform - Project Roadmap</title>
+    <style>
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #00509E;
+            --accent-color: #00A8E8;
+            --background-color: #f4f7f6;
+            --text-color: #333;
+            --card-bg: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 0 20px;
+        }
+
+        .timeline {
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--accent-color);
+            top: 0;
+            bottom: 0;
+            left: 20px;
+            border-radius: 2px;
+        }
+
+        .day-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            margin-left: 60px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .day-card::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 4px solid var(--accent-color);
+            border-radius: 50%;
+            left: -52px;
+            top: 25px;
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .day-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.6rem;
+        }
+
+        .day-header .time-badge {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .task-list li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .task-list li::before {
+            content: '✓';
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .deliverables {
+            margin-top: 20px;
+            background-color: #f8faff;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px dashed var(--accent-color);
+        }
+
+        .deliverables h4 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+        }
+        
+        .citation {
+            font-size: 0.8rem;
+            color: #777;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Bluestock Fintech Capstone</h1>
+        <p>Mutual Fund Analytics Platform - 7 Day Roadmap</p>
+    </header>
+
+    <div class="container">
+        <div class="timeline">
+            
+            <div class="day-card">
+                <div class="day-header">
+                    <h2>Day 1: Project Setup + Data Ingestion (ETL) <span class="citation">[cite: 135]</span></h2>
+                    <span class="time-badge">6-8 Hours</span>
+                </div>
+                <ul class="task-list">
+                    <li>Create project folder structure (data/raw, data/processed, notebooks, sql, dashboard, reports) <span class="citation">[cite: 142]</span>.</li>
+                    <li>Install dependencies (pandas, numpy, matplotlib, seaborn, plotly, sqlalchemy, sqlite3, requests, jupyter) <span class="citation">[cite: 142]</span>.</li>
+                    <li>Load all 10 CSV datasets using pandas and verify shape/dtypes <span class="citation">[cite: 142]</span>.</li>
+                    <li>Fetch live NAV from mfapi.in for HDFC Top 100 (Code 125497) <span class="citation">[cite: 142]</span>.</li>
+                    <li>Fetch NAV for 5 specific schemes via REST API (SBI, ICICI, Nippon, Axis, Kotak) <span class="citation">[cite: 142]</span>.</li>
+                    <li>Understand fund master data and validate AMFI codes across datasets <span class="citation">[cite: 142]</span>.</li>
+                </ul>
+                <div class="deliverables">
+                    <h4>Deliverables <span class="citation">[cite: 145]</span>:</h4>
+                    <p>Project repo, <code>data_ingestion.py</code>, <code>live_nav_fetch.py</code>, 15 raw CSV files in data/raw/</p>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <h2>Day 2: Data Cleaning + SQL Database Design <span class="citation">[cite: 146]</span></h2>
+                    <span class="time-badge">7-8 Hours</span>
+                </div>
+                <ul class="task-list">
+                    <li>Clean NAV history (parse dates, sort, forward-fill missing NAV, remove duplicates) <span class="citation">[cite: 153]</span>.</li>
+                    <li>Clean investor transactions (standardize types, validate amounts, fix formats) <span class="citation">[cite: 153]</span>.</li>
+                    <li>Clean scheme performance data (validate returns, flag negative Sharpe ratios) <span class="citation">[cite: 153]</span>.</li>
+                    <li>Design 5-table SQLite star schema (dim_fund, fact_nav, fact_transactions, etc.) <span class="citation">[cite: 153]</span>.</li>
+                    <li>Load all cleaned datasets into SQLite via SQLAlchemy <span class="citation">[cite: 153]</span>.</li>
+                    <li>Write 10 analytical SQL queries (e.g., Top 5 funds by AUM, Avg NAV per month) <span class="citation">[cite: 158]</span>.</li>
+                    <li>Create data dictionary documenting all columns <span class="citation">[cite: 167]</span>.</li>
+                </ul>
+                <div class="deliverables">
+                    <h4>Deliverables <span class="citation">[cite: 176]</span>:</h4>
+                    <p>10 clean CSVs, <code>bluestock_mf.db</code>, <code>schema.sql</code>, <code>queries.sql</code>, <code>data_dictionary.md</code></p>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <h2>Day 3: Exploratory Data Analysis (EDA) <span class="citation">[cite: 178]</span></h2>
+                    <span class="time-badge">7-8 Hours</span>
+                </div>
+                <ul class="task-list">
+                    <li>Plot daily NAV trends for all 40 schemes (2022-2026) <span class="citation">[cite: 184]</span>.</li>
+                    <li>Create grouped bar chart for AUM growth by fund house <span class="citation">[cite: 184]</span>.</li>
+                    <li>Plot monthly SIP inflow time-series and category-wise inflow heatmap <span class="citation">[cite: 184]</span>.</li>
+                    <li>Analyze investor demographics (age groups, SIP amounts) and geographic distribution <span class="citation">[cite: 184]</span>.</li>
+                    <li>Plot folio count growth and create a correlation matrix for NAV returns <span class="citation">[cite: 184]</span>.</li>
+                    <li>Visualize top holdings sector distribution (donut chart) <span class="citation">[cite: 184]</span>.</li>
+                    <li>Summarize 10 key EDA findings <span class="citation">[cite: 184]</span>.</li>
+                </ul>
+                <div class="deliverables">
+                    <h4>Deliverables <span class="citation">[cite: 185]</span>:</h4>
+                    <p><code>EDA_Analysis.ipynb</code> with 15+ charts, EDA_Findings summary, exported PNG charts</p>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <h2>Day 4: Fund Performance Analytics <span class="citation">[cite: 187]</span></h2>
+                    <span class="time-badge">7-8 Hours</span>
+                </div>
+                <ul class="task-list">
+                    <li>Compute daily returns and annualised returns for all funds <span class="citation">[cite: 193]</span>.</li>
+                    <li>Calculate CAGR for 1yr, 3yr, and 5yr periods <span class="citation">[cite: 193]</span>.</li>
+                    <li>Compute risk metrics: Sharpe Ratio and Sortino Ratio <span class="citation">[cite: 193]</span>.</li>
+                    <li>Compute Alpha and Beta against Nifty 100 benchmark using OLS regression <span class="citation">[cite: 193]</span>.</li>
+                    <li>Calculate Maximum Drawdown for each fund <span class="citation">[cite: 193]</span>.</li>
+                    <li>Build a composite Fund Scorecard (0-100 score based on ranks) <span class="citation">[cite: 193]</span>.</li>
+                    <li>Plot benchmark comparison chart (Top 5 funds vs Nifty indices) <span class="citation">[cite: 193]</span>.</li>
+                </ul>
+                <div class="deliverables">
+                    <h4>Deliverables <span class="citation">[cite: 194]</span>:</h4>
+                    <p><code>Performance_Analytics.ipynb</code>, <code>fund_scorecard.csv</code>, <code>alpha_beta.csv</code>, benchmark chart</p>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <h2>Day 5: Dashboard Development <span class="citation">[cite: 196]</span></h2>
+                    <span class="time-badge">7-8 Hours</span>
+                </div>
+                <ul class="task-list">
+                    <li>Connect Power BI / Tableau to SQLite database and verify tables <span class="citation">[cite: 199]</span>.</li>
+                    <li>Build Page 1 (Industry Overview): KPI cards, AUM line chart, AUM by fund house bar chart <span class="citation">[cite: 199]</span>.</li>
+                    <li>Build Page 2 (Fund Performance): Risk/Return scatter plot, scorecard table, NAV line chart <span class="citation">[cite: 199]</span>.</li>
+                    <li>Build Page 3 (Investor Analytics): Map/Bar by state, demographic splits, transaction volumes <span class="citation">[cite: 199]</span>.</li>
+                    <li>Build Page 4 (SIP & Market Trends): SIP Inflow vs Nifty 50, category inflows heatmap <span class="citation">[cite: 199]</span>.</li>
+                    <li>Apply formatting, tooltips, drill-throughs, and Bluestock branding <span class="citation">[cite: 199]</span>.</li>
+                </ul>
+                <div class="deliverables">
+                    <h4>Deliverables <span class="citation">[cite: 204]</span>:</h4>
+                    <p><code>bluestock_mf_dashboard.pbix</code>, <code>Dashboard.pdf</code>, 4 page screenshots</p>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <h2>Day 6: Advanced Analytics + Risk Metrics <span class="citation">[cite: 206]</span></h2>
+                    <span class="time-badge">6-7 Hours</span>
+                </div>
+                <ul class="task-list">
+                    <li>Compute Historical VaR (95%) and Conditional VaR (CVaR) <span class="citation">[cite: 213]</span>.</li>
+                    <li>Compute and plot Rolling 90-day Sharpe Ratio for 5 funds <span class="citation">[cite: 213]</span>.</li>
+                    <li>Perform investor cohort analysis (average SIP, total invested by start year) <span class="citation">[cite: 213]</span>.</li>
+                    <li>Conduct SIP continuation analysis (identify 'at-risk' investors with >35 day gaps) <span class="citation">[cite: 213]</span>.</li>
+                    <li>Build a simple fund recommendation logic based on risk appetite <span class="citation">[cite: 213]</span>.</li>
+                    <li>Analyze sector concentration using Herfindahl-Hirschman Index (HHI) <span class="citation">[cite: 213]</span>.</li>
+                </ul>
+                <div class="deliverables">
+                    <h4>Deliverables <span class="citation">[cite: 214]</span>:</h4>
+                    <p><code>Advanced_Analytics.ipynb</code>, <code>var_cvar_report.csv</code>, <code>recommender.py</code></p>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <h2>Day 7: Final Report + Presentation + Deployment <span class="citation">[cite: 216]</span></h2>
+                    <span class="time-badge">6-7 Hours</span>
+                </div>
+                <ul class="task-list">
+                    <li>Write the final PDF report (Executive Summary, ETL, EDA, Performance, Recommendations) <span class="citation">[cite: 223]</span>.</li>
+                    <li>Create a 12-slide presentation deck covering the full project lifecycle <span class="citation">[cite: 223]</span>.</li>
+                    <li>Clean Python code (add docstrings) and create <code>run_pipeline.py</code> <span class="citation">[cite: 223]</span>.</li>
+                    <li>Write comprehensive root <code>README.md</code> and push final code to GitHub <span class="citation">[cite: 223]</span>.</li>
+                    <li>Optional: Publish dashboard to Power BI Service / Tableau Public <span class="citation">[cite: 223]</span>.</li>
+                    <li>Complete final self-review checklist <span class="citation">[cite: 223]</span>.</li>
+                </ul>
+                <div class="deliverables">
+                    <h4>Deliverables <span class="citation">[cite: 225]</span>:</h4>
+                    <p><code>Final_Report.pdf</code>, <code>Presentation.pptx</code>, Clean GitHub repo, Published dashboard</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
