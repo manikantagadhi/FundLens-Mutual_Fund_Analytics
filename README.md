@@ -22,6 +22,7 @@
 ---
 </div>
 
+<img width="1536" height="1024" alt="fundlens" src="https://github.com/user-attachments/assets/ae6ce3a9-47c1-4969-8863-937e773113b5" />
 ## 📋 Table of Contents
 
 - [🎯 Project Overview](#-project-overview)
