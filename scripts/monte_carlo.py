@@ -1,75 +1,140 @@
-import os
-import sqlite3
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd
 
-def run_monte_carlo():
-    # 1. Path Setup (Absolute Paths to prevent errors)
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(BASE_DIR, '..', 'data', 'db', 'bluestock_mf.db')
-    report_path = os.path.join(BASE_DIR, '..', 'reports', 'monte_carlo_projection.png')
 
-    # 2. Fetch Historical Data (Using HDFC Top 100 as an example)
-    print("Fetching historical NAV data...")
-    conn = sqlite3.connect(db_path)
-    query = "SELECT nav_date, nav FROM fact_nav WHERE amfi_code = '125497' ORDER BY nav_date"
-    df = pd.read_sql_query(query, conn)
-    conn.close()
+TRADING_DAYS = 252
 
-    # 3. Calculate Daily Returns & Statistical Variables
-    df['returns'] = df['nav'].pct_change()
-    df.dropna(inplace=True)
 
-    mu = df['returns'].mean() # Average daily return
-    sigma = df['returns'].std() # Daily volatility (Risk)
-    last_nav = df['nav'].iloc[-1]
+def calculate_daily_returns(nav_series):
+    """
+    Calculate daily percentage returns from NAV values.
+    """
+    nav_series = pd.Series(nav_series).dropna()
 
-    # 4. Monte Carlo Simulation Setup
-    simulations = 1000
-    years = 5
-    trading_days = 252 * years 
+    if len(nav_series) < 2:
+        raise ValueError("At least two NAV observations are required.")
 
-    print(f" Running {simulations} simulations for the next {years} years...")
-    
-    # Generate random normal returns
-    random_returns = np.random.normal(loc=mu, scale=sigma, size=(trading_days, simulations))
+    returns = nav_series.pct_change().dropna()
 
-    # Calculate price paths using Cumulative Product
-    price_paths = np.zeros_like(random_returns)
-    price_paths[0] = last_nav
-    for t in range(1, trading_days):
-        price_paths[t] = price_paths[t-1] * (1 + random_returns[t])
+    return returns
 
-    # 5. Calculate Confidence Intervals (Uncertainty Bands)
-    percentile_5 = np.percentile(price_paths, 5, axis=1)   # Pessimistic Scenario (Worst 5%)
-    percentile_50 = np.percentile(price_paths, 50, axis=1) # Median Expected Scenario
-    percentile_95 = np.percentile(price_paths, 95, axis=1) # Optimistic Scenario (Top 5%)
 
-    # 6. Plotting the Data
-    print("Generating Probability Graph...")
-    plt.figure(figsize=(14, 7))
-    
-    # Plotting a sample of 100 random paths for visual effect
-    plt.plot(price_paths[:, :100], color='#38bdf8', alpha=0.05) 
+def run_monte_carlo(
+    nav_series,
+    initial_investment=100000,
+    years=5,
+    simulations=1000,
+    random_seed=42
+):
+    """
+    Run Monte Carlo simulation using historical daily returns.
 
-    # Plotting the Confidence Bands
-    plt.plot(percentile_50, color='#facc15', linewidth=2.5, label='Expected Median NAV (50th Percentile)')
-    plt.plot(percentile_95, color='#10b981', linewidth=2.5, linestyle='--', label='Optimistic Bound (95th Percentile)')
-    plt.plot(percentile_5, color='#ef4444', linewidth=2.5, linestyle='--', label='Pessimistic Bound (5th Percentile)')
+    Parameters
+    ----------
+    nav_series : pandas Series
+        Historical NAV values.
 
-    plt.title('Monte Carlo Simulation: 5-Year Probability Forecast (HDFC Top 100)', fontsize=14, fontweight='bold')
-    plt.xlabel('Future Trading Days (1 Year = 252 Days)', fontsize=12)
-    plt.ylabel('Projected Net Asset Value (₹)', fontsize=12)
-    plt.legend(loc='upper left', fontsize=10)
-    plt.grid(True, alpha=0.3, linestyle='--')
-    
-    # Clean background for reports
-    plt.gca().set_facecolor('#f8fafc')
+    initial_investment : float
+        Starting investment amount.
 
-    # 7. Save to Reports folder
-    plt.savefig(report_path, bbox_inches='tight', dpi=300)
-    print(f"Success! Graph saved to: reports/monte_carlo_projection.png")
+    years : int
+        Number of years to simulate.
 
-if __name__ == "__main__":
-    run_monte_carlo()
+    simulations : int
+        Number of simulation paths.
+
+    random_seed : int
+        Seed for reproducible results.
+
+    Returns
+    -------
+    dict
+        Simulation results and summary statistics.
+    """
+
+    if initial_investment <= 0:
+        raise ValueError("Initial investment must be greater than zero.")
+
+    if years <= 0:
+        raise ValueError("Investment period must be greater than zero.")
+
+    if simulations <= 0:
+        raise ValueError("Number of simulations must be greater than zero.")
+
+    returns = calculate_daily_returns(nav_series)
+
+    if len(returns) < 30:
+        raise ValueError("Not enough historical return data for simulation.")
+
+    mean_daily_return = returns.mean()
+    daily_volatility = returns.std()
+
+    total_days = years * TRADING_DAYS
+
+    rng = np.random.default_rng(random_seed)
+
+    random_returns = rng.normal(
+        loc=mean_daily_return,
+        scale=daily_volatility,
+        size=(simulations, total_days)
+    )
+
+    growth_paths = np.cumprod(1 + random_returns, axis=1)
+
+    portfolio_paths = initial_investment * growth_paths
+
+    final_values = portfolio_paths[:, -1]
+
+    summary = {
+        "initial_investment": initial_investment,
+        "years": years,
+        "simulations": simulations,
+        "mean_daily_return": mean_daily_return,
+        "daily_volatility": daily_volatility,
+        "median_final_value": np.percentile(final_values, 50),
+        "percentile_10": np.percentile(final_values, 10),
+        "percentile_25": np.percentile(final_values, 25),
+        "percentile_75": np.percentile(final_values, 75),
+        "percentile_90": np.percentile(final_values, 90),
+        "mean_final_value": np.mean(final_values),
+        "minimum_final_value": np.min(final_values),
+        "maximum_final_value": np.max(final_values),
+    }
+
+    return {
+        "paths": portfolio_paths,
+        "final_values": final_values,
+        "summary": summary,
+    }
+
+
+def create_simulation_dataframe(result):
+    """
+    Convert simulation paths into a DataFrame.
+
+    Each row represents a simulation.
+    Each column represents a trading day.
+    """
+
+    paths = result["paths"]
+
+    return pd.DataFrame(paths)
+
+
+def create_percentile_dataframe(result):
+    """
+    Create percentile bands across simulation paths.
+    """
+
+    paths = result["paths"]
+
+    percentile_data = {
+        "day": np.arange(1, paths.shape[1] + 1),
+        "p10": np.percentile(paths, 10, axis=0),
+        "p25": np.percentile(paths, 25, axis=0),
+        "p50": np.percentile(paths, 50, axis=0),
+        "p75": np.percentile(paths, 75, axis=0),
+        "p90": np.percentile(paths, 90, axis=0),
+    }
+
+    return pd.DataFrame(percentile_data)
