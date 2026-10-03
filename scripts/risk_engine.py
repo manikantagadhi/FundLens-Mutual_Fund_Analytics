@@ -8,8 +8,18 @@ TRADING_DAYS = 252
 def calculate_daily_returns(nav_series):
     """
     Calculate daily percentage returns from a NAV series.
+
+    Uses a fast path when the input is already numeric,
+    while preserving the original behavior for non-numeric data.
     """
-    nav_series = pd.to_numeric(nav_series, errors="coerce").dropna()
+
+    if pd.api.types.is_numeric_dtype(nav_series):
+        nav_series = nav_series.dropna()
+    else:
+        nav_series = pd.to_numeric(
+            nav_series,
+            errors="coerce"
+        ).dropna()
 
     if len(nav_series) < 2:
         return pd.Series(dtype=float)
